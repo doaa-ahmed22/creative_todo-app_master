@@ -2,6 +2,12 @@ abstract class AppStates {}
 
 class InitialState extends AppStates {}
 
-class BottomNavChangeToZero extends AppStates {}
+class AppCreateDatabaseState extends AppStates {}
 
-class BottomNavChangeToOne extends AppStates {}
+class AppInsertDatabaseState extends AppStates {}
+
+class AppGetDatabaseState extends AppStates {}
+
+class AppUpdateDatabaseState extends AppStates {}
+
+class AppDeleteDatabaseState extends AppStates {}
