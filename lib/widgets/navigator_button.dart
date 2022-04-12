@@ -1,4 +1,4 @@
-import 'package:creative_app/constantes/colors.dart';
+import 'package:creative_app/constants/colors.dart';
 import 'package:creative_app/screens/myhome_page.dart';
 import 'package:creative_app/screens/mytask_page.dart';
 import 'package:flutter/material.dart';

@@ -1,12 +1,20 @@
 import 'package:creative_app/bloc/cubit.dart';
-import 'package:creative_app/constantes/colors.dart';
-import 'package:creative_app/screens/myhome_page.dart';
+import 'package:creative_app/constants/colors.dart';
 import 'package:creative_app/screens/on_boarding.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'bloc/my_block_observer.dart';
+
 void main() {
-  runApp(MyApp());
+  BlocOverrides.runZoned(
+    () {
+      // Use cubits...
+      runApp(MyApp());
+    },
+    blocObserver: MyBlocObserver(),
+  );
+  // runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

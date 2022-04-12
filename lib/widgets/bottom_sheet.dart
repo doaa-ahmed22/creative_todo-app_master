@@ -1,7 +1,7 @@
 import 'package:creative_app/bloc/bloc_state.dart';
 import 'package:creative_app/bloc/cubit.dart';
-import 'package:creative_app/constantes/colors.dart';
-import 'package:creative_app/constantes/styles.dart';
+import 'package:creative_app/constants/colors.dart';
+import 'package:creative_app/constants/styles.dart';
 import 'package:creative_app/screens/myhome_page.dart';
 import 'package:creative_app/sqflite.dart';
 
@@ -203,7 +203,7 @@ class _Add_Task_ScreenState extends State<Add_Task_Screen> {
                           Container(
                             width: MediaQuery.of(context).size.width / 1.2,
                             child: Text(
-                              'Choose data',
+                              'Choose date',
                               style: TextStyle(
                                   color: MyColors.textSubHeaderGrey,
                                   fontSize: 18),
@@ -218,7 +218,7 @@ class _Add_Task_ScreenState extends State<Add_Task_Screen> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Today ${DateFormat("yyyy-MM-dd").format(DateTime.now())}',
+                                  '${cubit.strDate}',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                       fontSize: 12,
@@ -231,12 +231,14 @@ class _Add_Task_ScreenState extends State<Add_Task_Screen> {
                                   onTap: () {
                                     showDatePicker(
                                       context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime.now(),
+                                      initialDate: cubit.pickedDate,
+                                      firstDate: cubit.pickedDate,
                                       lastDate: DateTime.parse('2023-01-01'),
+                                      currentDate: cubit.pickedDate,
                                     ).then((value) {
                                       dateController.text =
                                           DateFormat.yMMMd().format(value!);
+                                      cubit.updateDate(value);
                                     });
                                   },
                                   child: RotatedBox(
@@ -268,7 +270,7 @@ class _Add_Task_ScreenState extends State<Add_Task_Screen> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Today ${DateFormat.jm().format(DateTime.now())}',
+                                  '${cubit.strTime}',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                       fontSize: 12,
@@ -280,11 +282,12 @@ class _Add_Task_ScreenState extends State<Add_Task_Screen> {
                                 InkWell(
                                   onTap: () {
                                     showTimePicker(
-                                            context: context,
-                                            initialTime: TimeOfDay.now())
-                                        .then((value) {
+                                      context: context,
+                                      initialTime: cubit.pickedTime,
+                                    ).then((value) {
                                       timeController.text =
                                           value!.format(context).toString();
+                                      cubit.updateTime(value);
                                     });
                                   },
                                   child: RotatedBox(
@@ -300,23 +303,25 @@ class _Add_Task_ScreenState extends State<Add_Task_Screen> {
                           ),
                           MaterialButton(
                             onPressed: () async {
-                              var intType =
+                              String? intType =
                                   colorTypes[myOptions[selectedIndex].myColor];
-                              int response = await cubit.insertToDatabase(
-                                title: textController.text,
-                                time: timeController.text,
-                                date: dateController.text,
-                                type: intType!,
-                              );
-                              print(
-                                  'response============================$response');
-                              if (response > 0) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => MyHomePage(),
-                                    ));
-                              }
+                              // int response = await cubit.insertToDatabase(
+                              cubit
+                                  .insertToDatabase(
+                                      title: textController.text,
+                                      time: timeController.text,
+                                      date: dateController.text,
+                                      type: intType!)
+                                  .then((value) {
+                                print('response ==> $value');
+                                if (value > 0) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MyHomePage(),
+                                      ));
+                                }
+                              });
                             },
                             textColor: Colors.white,
                             padding: EdgeInsets.all(10),

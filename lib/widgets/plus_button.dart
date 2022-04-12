@@ -1,5 +1,5 @@
-import 'package:creative_app/constantes/colors.dart';
-import 'package:creative_app/constantes/styles.dart';
+import 'package:creative_app/constants/colors.dart';
+import 'package:creative_app/constants/styles.dart';
 import 'package:creative_app/widgets/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 

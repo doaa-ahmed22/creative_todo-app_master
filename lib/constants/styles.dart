@@ -1,4 +1,4 @@
-import 'package:creative_app/constantes/colors.dart';
+import 'package:creative_app/constants/colors.dart';
 import 'package:flutter/cupertino.dart';
 
 const TextStyle title = TextStyle(

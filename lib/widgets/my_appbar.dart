@@ -1,4 +1,4 @@
-import 'package:creative_app/constantes/colors.dart';
+import 'package:creative_app/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
 

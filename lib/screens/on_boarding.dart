@@ -1,8 +1,8 @@
-import 'package:creative_app/constantes/styles.dart';
+import 'package:creative_app/constants/styles.dart';
 import 'package:creative_app/screens/no_task.dart';
 import 'package:flutter/material.dart';
 
-import '../constantes/colors.dart';
+import '../constants/colors.dart';
 
 class OnBoarding extends StatelessWidget {
   const OnBoarding({Key? key}) : super(key: key);

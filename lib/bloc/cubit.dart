@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:creative_app/bloc/bloc_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AppCubit extends Cubit<AppStates> {
@@ -13,6 +14,10 @@ class AppCubit extends Cubit<AppStates> {
   late Database database;
   List data = [];
   bool isLoading = true;
+  DateTime pickedDate = DateTime.now();
+  TimeOfDay pickedTime = TimeOfDay.now();
+  String strTime = DateFormat.jm().format(DateTime.now());
+  String strDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
   // List<Map> newtasks = [];
   // List<Map> donetasks = [];
   // List<Map> archivetasks = [];
@@ -61,7 +66,7 @@ class AppCubit extends Cubit<AppStates> {
     await database.transaction((txn) async {
       return await txn
           .rawInsert(
-              'INSERT INTO tasks(title ,data,time,status,type) VALUES("$title" ,"$date","$time","new","$type")')
+              'INSERT INTO tasks(title,date,time,status,type) VALUES("$title" ,"$date","$time","new","$type")')
           .then((value) {
         emit(AppInsertDatabaseState());
         print('$value data inserted successful');
@@ -117,5 +122,21 @@ class AppCubit extends Cubit<AppStates> {
       getDataFromDatabase(database);
       emit(AppDeleteDatabaseState());
     });
+  }
+
+  void updateDate(DateTime date) {
+    pickedDate = date;
+    strDate = DateFormat("yyyy-MM-dd").format(pickedDate);
+    strTime = DateFormat.jm().format(DateTime(pickedDate.year, pickedDate.month,
+        pickedDate.day, pickedTime.hour, pickedTime.minute));
+    emit(AppUpdatePickedDate());
+  }
+
+  void updateTime(TimeOfDay time) {
+    pickedTime = time;
+    strDate = DateFormat("yyyy-MM-dd").format(pickedDate);
+    strTime = DateFormat.jm().format(DateTime(pickedDate.year, pickedDate.month,
+        pickedDate.day, pickedTime.hour, pickedTime.minute));
+    emit(AppUpdatePickedTime());
   }
 }

@@ -1,7 +1,7 @@
 import 'package:creative_app/bloc/bloc_state.dart';
 import 'package:creative_app/bloc/cubit.dart';
-import 'package:creative_app/constantes/colors.dart';
-import 'package:creative_app/constantes/styles.dart';
+import 'package:creative_app/constants/colors.dart';
+import 'package:creative_app/constants/styles.dart';
 import 'package:creative_app/widgets/my_appbar.dart';
 import 'package:creative_app/widgets/navigator_button.dart';
 import 'package:creative_app/widgets/plus_button.dart';
