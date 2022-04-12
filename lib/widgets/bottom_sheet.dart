@@ -3,9 +3,7 @@ import 'package:creative_app/bloc/cubit.dart';
 import 'package:creative_app/constants/colors.dart';
 import 'package:creative_app/constants/styles.dart';
 import 'package:creative_app/screens/myhome_page.dart';
-import 'package:creative_app/sqflite.dart';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -286,7 +284,7 @@ class _Add_Task_ScreenState extends State<Add_Task_Screen> {
                                       initialTime: cubit.pickedTime,
                                     ).then((value) {
                                       timeController.text =
-                                          value!.format(context).toString();
+                                          value!.format(context);
                                       cubit.updateTime(value);
                                     });
                                   },
