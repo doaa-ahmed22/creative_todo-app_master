@@ -25,60 +25,27 @@ class _Add_Task_ScreenState extends State<Add_Task_Screen> {
   TextEditingController timeController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController typeController = TextEditingController();
-  Map<Color, String> colorTypes = {
-    MyColors.yellowShadow: 'Personal',
-    MyColors.greenShadow: 'Work',
-    MyColors.purpleShadow: 'Meeting',
-    MyColors.blueShadow: 'Study',
-    MyColors.orangeBackground: 'Shopping',
-    MyColors.deepPurpleBackground: 'Free Time',
-  };
 
   //SqfLiteApp sqfLiteApp = SqfLiteApp();
-  List myOptions = [
-    inkWell(
-      MyColors.yellowAccent,
-      'Personal',
-      MyColors.yellowShadow,
-      0,
-    ),
-    inkWell(
-      MyColors.greenIcon,
-      'Work',
-      MyColors.greenShadow,
-      1,
-    ),
-    inkWell(
-      MyColors.purpleIcon,
-      'Meeting',
-      MyColors.purpleShadow,
-      2,
-    ),
-    inkWell(
-      MyColors.blueIcon,
-      'Study',
-      MyColors.blueShadow,
-      3,
-    ),
-    inkWell(
-      MyColors.orangeIcon,
-      'Shopping',
-      MyColors.orangeBackground,
-      4,
-    ),
-    inkWell(
-      MyColors.deepPurpleIcon,
-      'Free Time',
-      MyColors.deepPurpleBackground,
-      5,
-    ),
-  ];
+
   int selectedIndex = 0;
+  void setSelectedIndex(int selectedIndex) {
+    this.selectedIndex = selectedIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AppCubit, AppStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is AppInsertDatabaseState) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => MyHomePage(),
+            ),
+          );
+        }
+      },
       builder: (context, state) {
         var cubit = AppCubit.get(context);
         return Container(
@@ -177,20 +144,20 @@ class _Add_Task_ScreenState extends State<Add_Task_Screen> {
                             ),
                             child: ListView.builder(
                               itemBuilder: (context, index) {
-                                myOptions[index]
+                                cubit.myOptions[index]
                                     .setSelectedIndex(selectedIndex);
                                 return InkWell(
-                                  child: myOptions[index].myInkWell(),
+                                  child: cubit.myOptions[index].myInkWell(),
                                   onTap: () {
                                     setState(() {
                                       selectedIndex = index;
-                                      myOptions[index]
+                                      cubit.myOptions[index]
                                           .setSelectedIndex(selectedIndex);
                                     });
                                   },
                                 );
                               },
-                              itemCount: myOptions.length,
+                              itemCount: cubit.myOptions.length,
                               scrollDirection: Axis.horizontal,
                               shrinkWrap: true,
                             ),
@@ -301,25 +268,14 @@ class _Add_Task_ScreenState extends State<Add_Task_Screen> {
                           ),
                           MaterialButton(
                             onPressed: () async {
-                              String? intType =
-                                  colorTypes[myOptions[selectedIndex].myColor];
+                              String? intType = cubit.colorTypes[
+                                  cubit.myOptions[selectedIndex].myColor];
                               // int response = await cubit.insertToDatabase(
-                              cubit
-                                  .insertToDatabase(
-                                      title: textController.text,
-                                      time: timeController.text,
-                                      date: dateController.text,
-                                      type: intType!)
-                                  .then((value) {
-                                print('response ==> $value');
-                                if (value > 0) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => MyHomePage(),
-                                      ));
-                                }
-                              });
+                              await cubit.insertToDatabase(
+                                  title: textController.text,
+                                  time: timeController.text,
+                                  date: dateController.text,
+                                  type: intType!);
                             },
                             textColor: Colors.white,
                             padding: EdgeInsets.all(10),

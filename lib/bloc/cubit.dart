@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:creative_app/bloc/bloc_state.dart';
+import 'package:creative_app/constants/colors.dart';
+import 'package:creative_app/widgets/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +12,53 @@ class AppCubit extends Cubit<AppStates> {
 
   static AppCubit get(context) => BlocProvider.of(context);
 
+  List myOptions = [
+    inkWell(
+      MyColors.yellowAccent,
+      'Personal',
+      MyColors.yellowShadow,
+      0,
+    ),
+    inkWell(
+      MyColors.greenIcon,
+      'Work',
+      MyColors.greenShadow,
+      1,
+    ),
+    inkWell(
+      MyColors.purpleIcon,
+      'Meeting',
+      MyColors.purpleShadow,
+      2,
+    ),
+    inkWell(
+      MyColors.blueIcon,
+      'Study',
+      MyColors.blueShadow,
+      3,
+    ),
+    inkWell(
+      MyColors.orangeIcon,
+      'Shopping',
+      MyColors.orangeBackground,
+      4,
+    ),
+    inkWell(
+      MyColors.deepPurpleIcon,
+      'Free Time',
+      MyColors.deepPurpleBackground,
+      5,
+    ),
+  ];
+  Map<Color, String> colorTypes = {
+    MyColors.yellowShadow: 'Personal',
+    MyColors.greenShadow: 'Work',
+    MyColors.purpleShadow: 'Meeting',
+    MyColors.blueShadow: 'Study',
+    MyColors.orangeBackground: 'Shopping',
+    MyColors.deepPurpleBackground: 'Free Time',
+  };
+
   // late int currentIndex = 0;
   late Database database;
   List data = [];
@@ -18,10 +67,12 @@ class AppCubit extends Cubit<AppStates> {
   TimeOfDay pickedTime = TimeOfDay.now();
   String strTime = DateFormat.jm().format(DateTime.now());
   String strDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
+
   // List<Map> newtasks = [];
   // List<Map> donetasks = [];
   // List<Map> archivetasks = [];
   //
+
   // List<Widget> models = [
   //   Tasks(),
   //   done(),
@@ -64,13 +115,12 @@ class AppCubit extends Cubit<AppStates> {
     required String type,
   }) async {
     await database.transaction((txn) async {
-      return await txn
+      await txn
           .rawInsert(
               'INSERT INTO tasks(title,date,time,status,type) VALUES("$title" ,"$date","$time","new","$type")')
           .then((value) {
         emit(AppInsertDatabaseState());
         print('$value data inserted successful');
-
         getDataFromDatabase(database).then((value) {
           data = value;
           print(value);
@@ -86,6 +136,7 @@ class AppCubit extends Cubit<AppStates> {
     // newtasks = [];
     // donetasks = [];
     // archivetasks = [];
+    isLoading = false;
     return await database.rawQuery('SELECT * FROM tasks');
     //     value.forEach((element) {
     //       if (element['status'] == 'new')
@@ -100,19 +151,29 @@ class AppCubit extends Cubit<AppStates> {
   }
 
   Future updateDatabase({
-    required String status,
+    required String type,
     required String date,
     required String title,
     required String time,
     required int id,
+    // required BuildContext context,
   }) async {
-    await database.rawUpdate('''UPDATE tasks SET title= "$title",
+    await database.rawUpdate('''UPDATE tasks SET title="$title",
             date="${date}",
             time="${time}",
-            state="${state}" WHERE id=${id}''').then((value) {
-      getDataFromDatabase(database);
-      emit(AppUpdateDatabaseState());
+            status="new",
+            type="${type}"
+            WHERE id=${id}''').then((value) {
+      getDataFromDatabase(database).then((value) {
+        data = value;
+        print(value);
+        emit(AppGetDatabaseState());
+      });
+    }).catchError((error) {
+      print('data update error is ${error.toString()}');
     });
+    emit(AppUpdateDatabaseState());
+    // Navigator.pop(context);
   }
 
   void deleteDatabase({

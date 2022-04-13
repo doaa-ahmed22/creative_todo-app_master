@@ -20,14 +20,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var intIndex = 0;
 
-  //
-  // Future getDatabase() async {
-  //   List<Map> response = await sqfLiteApp.getDatabase();
-  //   data.addAll(response);
-  //   isLoading = false;
-  //   if (this.mounted) setState(() {});
-  // }
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AppCubit, AppStates>(
@@ -81,7 +73,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               onPressed: () {},
                               icon: Icon(
                                 Icons.panorama_fish_eye,
-                                color: Colors.red,
+                                color: cubit.colorTypes.keys.firstWhere(
+                                    (k) =>
+                                        cubit.colorTypes[k] ==
+                                        cubit.data[index]['type'],
+                                    orElse: () => Colors.red),
                                 size: 24,
                               ),
                             ),
@@ -92,8 +88,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     builder: (context) => UpdateScreen(
                                         title: cubit.data[index]['title'],
                                         date: cubit.data[index]['date'],
-                                        state: cubit.data[index]['state'],
                                         time: cubit.data[index]['time'],
+                                        type: cubit.data[index]['type'],
                                         id: cubit.data[index]['id']),
                                   ),
                                 );
