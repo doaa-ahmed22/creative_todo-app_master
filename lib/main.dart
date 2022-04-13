@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
 
 class Splash extends StatefulWidget {
   @override
-  SplashState createState() => new SplashState();
+  SplashState createState() => SplashState();
 }
 
 class SplashState extends State<Splash> with AfterLayoutMixin<Splash> {
@@ -53,11 +53,11 @@ class SplashState extends State<Splash> with AfterLayoutMixin<Splash> {
 
     if (_seen) {
       Navigator.of(context).pushReplacement(
-          new MaterialPageRoute(builder: (context) => new MyHomePage()));
+          MaterialPageRoute(builder: (context) => MyHomePage()));
     } else {
       await prefs.setBool('seen', true);
       Navigator.of(context).pushReplacement(
-          new MaterialPageRoute(builder: (context) => new OnBoarding()));
+          MaterialPageRoute(builder: (context) => OnBoarding()));
     }
   }
 
@@ -66,9 +66,14 @@ class SplashState extends State<Splash> with AfterLayoutMixin<Splash> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: new Center(
-        child: new Text('Loading...'),
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          Text('Loading...'),
+        ],
       ),
     );
   }
