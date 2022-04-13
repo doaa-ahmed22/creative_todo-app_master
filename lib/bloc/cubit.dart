@@ -1,10 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:creative_app/bloc/bloc_state.dart';
 import 'package:creative_app/constants/colors.dart';
+
 import 'package:creative_app/widgets/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:sqflite/sqflite.dart';
 
 class AppCubit extends Cubit<AppStates> {
@@ -16,47 +19,47 @@ class AppCubit extends Cubit<AppStates> {
     inkWell(
       MyColors.yellowAccent,
       'Personal',
-      MyColors.yellowShadow,
+      MyColors.yellowIcon,
       0,
     ),
     inkWell(
       MyColors.greenIcon,
       'Work',
-      MyColors.greenShadow,
+      MyColors.greenIcon,
       1,
     ),
     inkWell(
       MyColors.purpleIcon,
       'Meeting',
-      MyColors.purpleShadow,
+      MyColors.purpleIcon,
       2,
     ),
     inkWell(
       MyColors.blueIcon,
       'Study',
-      MyColors.blueShadow,
+      MyColors.blueIcon,
       3,
     ),
     inkWell(
       MyColors.orangeIcon,
       'Shopping',
-      MyColors.orangeBackground,
+      MyColors.orangeIcon,
       4,
     ),
     inkWell(
       MyColors.deepPurpleIcon,
       'Free Time',
-      MyColors.deepPurpleBackground,
+      MyColors.deepPurpleIcon,
       5,
     ),
   ];
   Map<Color, String> colorTypes = {
-    MyColors.yellowShadow: 'Personal',
-    MyColors.greenShadow: 'Work',
-    MyColors.purpleShadow: 'Meeting',
-    MyColors.blueShadow: 'Study',
-    MyColors.orangeBackground: 'Shopping',
-    MyColors.deepPurpleBackground: 'Free Time',
+    MyColors.yellowIcon: 'Personal',
+    MyColors.greenIcon: 'Work',
+    MyColors.purpleIcon: 'Meeting',
+    MyColors.blueIcon: 'Study',
+    MyColors.orangeIcon: 'Shopping',
+    MyColors.deepPurpleIcon: 'Free Time',
   };
 
   // late int currentIndex = 0;
@@ -200,4 +203,15 @@ class AppCubit extends Cubit<AppStates> {
         pickedDate.day, pickedTime.hour, pickedTime.minute));
     emit(AppUpdatePickedTime());
   }
+
+  // Future<bool> isFreshInstalled({required bool seen}) async {
+  //   const String key = "success moving";
+  //   var pref = await SharedPreferences.getInstance();
+  //   bool? seen = pref.getBool(key);
+  //   if (seen == null) {
+  //     return await pref.setBool(key, false);
+  //   } else {
+  //     return seen;
+  //   }
+  // }
 }
