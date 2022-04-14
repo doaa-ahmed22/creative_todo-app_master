@@ -15,3 +15,7 @@ class AppDeleteDatabaseState extends AppStates {}
 class AppUpdatePickedDate extends AppStates {}
 
 class AppUpdatePickedTime extends AppStates {}
+
+class AppSelectTypeState extends AppStates {}
+
+class AppTaskDone extends AppStates {}

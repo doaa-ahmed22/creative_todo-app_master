@@ -62,27 +62,27 @@ class AppCubit extends Cubit<AppStates> {
     MyColors.deepPurpleIcon: 'Free Time',
   };
 
-  // late int currentIndex = 0;
   late Database database;
   List data = [];
-  bool isLoading = true;
+  List myTasks = [];
+  // List taskIcons = [];
+  int personalCount = 0;
+  int workCount = 0;
+  int meetingCount = 0;
+  int studyCount = 0;
+  int shoppingCount = 0;
+  int freeTimeCount = 0;
+  bool isLoading = false;
   DateTime pickedDate = DateTime.now();
   TimeOfDay pickedTime = TimeOfDay.now();
   String strTime = DateFormat.jm().format(DateTime.now());
   String strDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
-
-  // List<Map> newtasks = [];
-  // List<Map> donetasks = [];
-  // List<Map> archivetasks = [];
-  //
-
-  // List<Widget> models = [
-  //   Tasks(),
-  //   done(),
-  //   Archived(),
-  // ];
+  IconData taskNotDone = Icons.radio_button_unchecked;
+  IconData taskDone = Icons.check_circle;
+  IconData checkTask = Icons.radio_button_unchecked;
 
   void createDatabase() {
+    isLoading = true;
     openDatabase(
       'dataAAb.db',
       version: 1,
@@ -99,14 +99,15 @@ class AppCubit extends Cubit<AppStates> {
       },
       onOpen: (database) {
         getDataFromDatabase(database).then((value) {
-          data = value;
           print(value);
-          emit(AppGetDatabaseState());
         });
         print('Opened database');
       },
     ).then((value) {
       database = value;
+      getDataFromDatabase(database).then((value) {
+        print(value);
+      });
       emit(AppCreateDatabaseState());
     });
   }
@@ -125,9 +126,7 @@ class AppCubit extends Cubit<AppStates> {
         emit(AppInsertDatabaseState());
         print('$value data inserted successful');
         getDataFromDatabase(database).then((value) {
-          data = value;
           print(value);
-          emit(AppGetDatabaseState());
         });
       }).catchError((error) {
         print('data inserted error is ${error.toString()}');
@@ -140,17 +139,44 @@ class AppCubit extends Cubit<AppStates> {
     // donetasks = [];
     // archivetasks = [];
     isLoading = false;
-    return await database.rawQuery('SELECT * FROM tasks');
-    //     value.forEach((element) {
-    //       if (element['status'] == 'new')
-    //         newtasks.add(element);
-    //       else if (element['status'] == 'done')
-    //         donetasks.add(element);
-    //       else
-    //         archivetasks.add(element);
-    //     });
-    //   });
+    database.rawQuery('SELECT * FROM tasks').then((value) {
+      data = value;
+      for (var element in data) {
+        if (element['type'] == 'Personal')
+          personalCount++;
+        else if (element['type'] == 'Work')
+          workCount++;
+        else if (element['type'] == 'Meeting')
+          meetingCount++;
+        else if (element['type'] == 'Study')
+          studyCount++;
+        else if (element['type'] == 'Shopping')
+          shoppingCount++;
+        else
+          freeTimeCount++;
+      }
+    });
+    emit(AppGetDatabaseState());
+    // for (var task in data) {
+    //   taskIcons.add(
+    //     Icon(
+    //       taskNotDone,
+    //       color: colorTypes.keys.firstWhere(
+    //           (k) => colorTypes[k] == task['type'],
+    //           orElse: () => Colors.red),
+    //       size: 24,
+    //     ),
+    //   );
     // }
+    return data;
+  }
+
+  void pickedTypeTasks(String type) {
+    myTasks.clear();
+    for (var element in data) {
+      if (element['type'] == type) myTasks.add(element);
+    }
+    emit(AppSelectTypeState());
   }
 
   Future updateDatabase({
@@ -168,9 +194,7 @@ class AppCubit extends Cubit<AppStates> {
             type="${type}"
             WHERE id=${id}''').then((value) {
       getDataFromDatabase(database).then((value) {
-        data = value;
         print(value);
-        emit(AppGetDatabaseState());
       });
     }).catchError((error) {
       print('data update error is ${error.toString()}');
@@ -203,6 +227,20 @@ class AppCubit extends Cubit<AppStates> {
         pickedDate.day, pickedTime.hour, pickedTime.minute));
     emit(AppUpdatePickedTime());
   }
+//TODO:TOGGLE
+//TODO:REMOVE
+//TODO:CLOSE APPBAR
+//TODO:FUNCTION UPDATE STATE
+  // void toggleDone(int index) {
+  //   taskIcons[index] = Icon(
+  //     (checkTask == taskNotDone) ? taskDone : taskNotDone,
+  //     color: colorTypes.keys.firstWhere(
+  //         (k) => colorTypes[k] == data[index]['type'],
+  //         orElse: () => Colors.red),
+  //     size: 24,
+  //   );
+  //   emit(AppTaskDone());
+  // }
 
   // Future<bool> isFreshInstalled({required bool seen}) async {
   //   const String key = "success moving";
