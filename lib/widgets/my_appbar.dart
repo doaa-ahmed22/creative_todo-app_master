@@ -90,7 +90,7 @@ Widget appBarNotification(BuildContext context) {
                         height: 3,
                       ),
                       Text(
-                        'New Tasks waiting to be added!',
+                        '${cubit.data[0]['title']}',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 10,
@@ -100,7 +100,7 @@ Widget appBarNotification(BuildContext context) {
                         height: 3,
                       ),
                       Text(
-                        'current time: ${cubit.strTime}',
+                        'task time: ${cubit.data[0]['time']}',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 10,

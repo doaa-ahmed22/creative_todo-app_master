@@ -41,7 +41,7 @@ class _MyListTasksState extends State<MyListTasks> {
                 Container(
                   margin: EdgeInsets.only(top: 20, left: 20, bottom: 15),
                   child: Text(
-                    'Today',
+                    'Manage Your Time ',
                     style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -66,9 +66,23 @@ class _MyListTasksState extends State<MyListTasks> {
                     width: MediaQuery.of(context).size.width,
                     child: ListTile(
                       leading: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          var status = cubit.myTasks[index]['status'] == "new"
+                              ? "done"
+                              : "new";
+                          cubit.updateDatabase(
+                              type: cubit.myTasks[index]['type'],
+                              date: cubit.myTasks[index]['date'],
+                              title: cubit.myTasks[index]['title'],
+                              time: cubit.myTasks[index]['time'],
+                              status: status,
+                              id: cubit.myTasks[index]['id']);
+                          cubit.pickedTypeTasks(cubit.myTasks[index]['type']);
+                        },
                         icon: Icon(
-                          Icons.panorama_fish_eye,
+                          cubit.myTasks[index]['status'] == "new"
+                              ? cubit.taskNotDone
+                              : cubit.taskDone,
                           color: cubit.colorTypes.keys.firstWhere(
                               (k) =>
                                   cubit.colorTypes[k] ==

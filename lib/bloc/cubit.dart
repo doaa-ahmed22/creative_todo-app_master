@@ -65,7 +65,7 @@ class AppCubit extends Cubit<AppStates> {
   late Database database;
   List data = [];
   List myTasks = [];
-  // List taskIcons = [];
+  List taskIcons = [];
   int personalCount = 0;
   int workCount = 0;
   int meetingCount = 0;
@@ -97,17 +97,18 @@ class AppCubit extends Cubit<AppStates> {
           print('Table is error ${error.toString()}');
         });
       },
-      onOpen: (database) {
-        getDataFromDatabase(database).then((value) {
-          print(value);
+      onOpen: (database) async {
+        print('Opening Database ---------------------------');
+        await getDataFromDatabase(database).then((value) {
+          print('tasks: ${value}');
         });
-        print('Opened database');
       },
     ).then((value) {
+      print('Opened database');
       database = value;
-      getDataFromDatabase(database).then((value) {
-        print(value);
-      });
+      // getDataFromDatabase(database).then((value) {
+      //   print(value);
+      // });
       emit(AppCreateDatabaseState());
     });
   }
@@ -139,7 +140,9 @@ class AppCubit extends Cubit<AppStates> {
     // donetasks = [];
     // archivetasks = [];
     isLoading = false;
-    database.rawQuery('SELECT * FROM tasks').then((value) {
+    personalCount = workCount =
+        meetingCount = studyCount = shoppingCount = freeTimeCount = 0;
+    await database.rawQuery('SELECT * FROM tasks').then((value) {
       data = value;
       for (var element in data) {
         if (element['type'] == 'Personal')
@@ -156,18 +159,19 @@ class AppCubit extends Cubit<AppStates> {
           freeTimeCount++;
       }
     });
+    taskIcons.clear();
+    for (var task in data) {
+      taskIcons.add(
+        Icon(
+          task['status'] == "new" ? taskNotDone : taskDone,
+          color: colorTypes.keys.firstWhere(
+              (k) => colorTypes[k] == task['type'],
+              orElse: () => Colors.red),
+          size: 24,
+        ),
+      );
+    }
     emit(AppGetDatabaseState());
-    // for (var task in data) {
-    //   taskIcons.add(
-    //     Icon(
-    //       taskNotDone,
-    //       color: colorTypes.keys.firstWhere(
-    //           (k) => colorTypes[k] == task['type'],
-    //           orElse: () => Colors.red),
-    //       size: 24,
-    //     ),
-    //   );
-    // }
     return data;
   }
 
@@ -184,13 +188,14 @@ class AppCubit extends Cubit<AppStates> {
     required String date,
     required String title,
     required String time,
+    required String status,
     required int id,
     // required BuildContext context,
   }) async {
     await database.rawUpdate('''UPDATE tasks SET title="$title",
             date="${date}",
             time="${time}",
-            status="new",
+            status="${status}",
             type="${type}"
             WHERE id=${id}''').then((value) {
       getDataFromDatabase(database).then((value) {
@@ -227,20 +232,22 @@ class AppCubit extends Cubit<AppStates> {
         pickedDate.day, pickedTime.hour, pickedTime.minute));
     emit(AppUpdatePickedTime());
   }
-//TODO:TOGGLE
+
 //TODO:REMOVE
 //TODO:CLOSE APPBAR
-//TODO:FUNCTION UPDATE STATE
-  // void toggleDone(int index) {
-  //   taskIcons[index] = Icon(
-  //     (checkTask == taskNotDone) ? taskDone : taskNotDone,
-  //     color: colorTypes.keys.firstWhere(
-  //         (k) => colorTypes[k] == data[index]['type'],
-  //         orElse: () => Colors.red),
-  //     size: 24,
-  //   );
-  //   emit(AppTaskDone());
-  // }
+
+  void toggleDone(int index) {
+    var myTask = data[index];
+    var status = myTask['status'] == "new" ? "done" : "new";
+    updateDatabase(
+        type: myTask['type'],
+        date: myTask['date'],
+        title: myTask['title'],
+        time: myTask['time'],
+        status: status,
+        id: myTask['id']);
+    emit(AppTaskDone());
+  }
 
   // Future<bool> isFreshInstalled({required bool seen}) async {
   //   const String key = "success moving";

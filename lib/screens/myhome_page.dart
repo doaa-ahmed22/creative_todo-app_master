@@ -11,6 +11,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -35,7 +36,136 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Scaffold(
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(210),
-              child: appBarNotification(context),
+              child: NewGradientAppBar(
+                flexibleSpace: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CustomPaint(
+                      painter: CircleOne(),
+                    ),
+                    CustomPaint(
+                      painter: CircleTwo(),
+                    ),
+                  ],
+                ),
+                title: Container(
+                  margin: EdgeInsets.only(top: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'Hello Doaa!',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        'You have ${AppCubit.get(context).data.length} tasks',
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w300),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 15, 15, 0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Image.asset(
+                        'assets/images/photo.jpg',
+                      ),
+                    ),
+                  )
+                ],
+                elevation: 5,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [MyColors.headerBlueDark, MyColors.headerBlueLight],
+                ),
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(10),
+                  child: Container(
+                    height: 115,
+                    margin: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: MyColors.headerGreyLight,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.fromLTRB(15, 5, 15, 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 7,
+                              ),
+                              Text(
+                                'Today Reminder',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              SizedBox(
+                                height: 3,
+                              ),
+                              Text(
+                                cubit.data.length > 0
+                                    ? '${cubit.data[0]['title']}'
+                                    : 'Tasks Loading',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w300),
+                              ),
+                              SizedBox(
+                                height: 3,
+                              ),
+                              Text(
+                                cubit.data.length > 0
+                                    ? 'Task Time: ${cubit.data[0]['time']}'
+                                    : '',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w300),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(
+                            left: 75,
+                          ),
+                          width: MediaQuery.of(context).size.width / 2.9,
+                          child: Image.asset(
+                            'assets/images/bell-left.png',
+                            scale: .2,
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                            bottom: 80,
+                          ),
+                          child: IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.clear,
+                              color: MyColors.greyBorder,
+                              size: 18,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
             body: SingleChildScrollView(
               child: Column(
@@ -70,17 +200,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: ListTile(
                         leading: IconButton(
                           onPressed: () {
-                            // cubit.toggleDone(index);
+                            cubit.toggleDone(index);
                           },
-                          icon: Icon(
-                            cubit.taskNotDone,
-                            color: cubit.colorTypes.keys.firstWhere(
-                                (k) =>
-                                    cubit.colorTypes[k] ==
-                                    cubit.data[index]['type'],
-                                orElse: () => Colors.red),
-                            size: 24,
-                          ),
+                          icon: cubit.taskIcons[index],
                         ),
                         trailing: IconButton(
                           onPressed: () {

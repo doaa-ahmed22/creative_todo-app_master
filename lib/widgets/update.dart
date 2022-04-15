@@ -288,6 +288,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                                   time: timeController.text,
                                   type: intType!,
                                   id: widget.id,
+                                  status: cubit.data[selectedIndex]['status'],
                                   // context: context
                                 );
                               },
